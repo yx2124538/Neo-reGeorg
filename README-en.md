@@ -13,7 +13,7 @@
 
 ## Version
 
-5.2.2 - [Change Log](CHANGELOG-en.md)
+5.3.0 - [Change Log](CHANGELOG-en.md)
 
 
 ## python dependencies
@@ -40,7 +40,7 @@ python -m pip install requests_ntlm   # NTLM authentication support
 * High compatibility of the server environment, such as the server is unstable, the server is only deployed on some machines under load balancing and other special circumstances
 * (php only) Refer to [pivotnacci](https://github.com/blackarrowsec/pivotnacci) to create multiple TCP connections for a single session, to deal with some load balancing scenarios
 * aspx/ashx/jsp/jspx no longer depends on Session, and can run normally in harsh environments such as no cookies
-* (non-php) supports intranet forwarding to deal with load balancing environment
+* (non-php & non-nodejs) supports intranet forwarding to deal with load balancing environment
 * Support process to start the server to deal with more scenarios
 
 
@@ -121,6 +121,11 @@ $ go run neoreg_servers/tunnel.go 8000
 $ python3 neoreg.py -k password -u http://127.0.0.1:8000/anysting
 ```
 
+9. Supports in-memory proxy format for Node.js. Modify the path in the JS file by adding `const path = '/proxy_path';`, and include the `--async-connect` parameter for connections.
+```ruby
+$ python3 neoreg.py -k password --async-connect -u <url>
+```
+
 * For more information on performance and stability parameters, refer to -h help information
 ```ruby
 # Generate server-side scripts
@@ -145,12 +150,14 @@ $ python neoreg.py generate -h
       --max-read-size KB    Remote max read size (default: 512)
 
 # Connection server
+$ python neoreg.py -h
     usage: neoreg.py [-h] -u URI [-r URL] [-R] [-t IP:PORT] -k KEY [-l IP]
-                     [-p PORT] [-s] [-H LINE] [-c LINE] [-x LINE]
-                     [--php] [--php-connect-timeout S] [--local-dns] [--read-buff KB]
-                     [--read-interval MS] [--write-interval MS] [--max-threads N]
-                     [--max-retry N] [--cut-left N] [--cut-right N]
-                     [--extract EXPR] [-v]
+                     [-p PORT] [-s] [-H LINE] [-c LINE] [-x LINE] [-T STR/FILE]
+                     [-a] [--php-skip-cookie] [--go] [--php-connect-timeout S]
+                     [--local-dns] [--read-buff KB] [--read-interval MS]
+                     [--write-interval MS] [--max-threads N] [--max-retry N]
+                     [--cut-left N] [--cut-right N] [--extract EXPR]
+                     [--ntlm-auth USER:PASS] [-v]
 
     Socks server for Neoreg HTTP(s) tunneller (DEBUG MODE: -k debug)
 
@@ -160,7 +167,7 @@ $ python neoreg.py generate -h
       -r URL, --redirect-url URL
                             Intranet forwarding the designated server (only
                             java/.net)
-      -R, --force-redirect  Forced forwarding (only -r)
+      -R, --force-redirect  Forced forwarding (only jsp -r)
       -t IP:PORT, --target IP:PORT
                             Network forwarding Target, After setting this
                             parameter, port forwarding will be enabled
@@ -179,7 +186,9 @@ $ python neoreg.py generate -h
       -T STR/FILE, --request-template STR/FILE
                             HTTP request template (eg:
                             'img=data:image/png;base64,NEOREGBODY&save=ok')
-      --php                 Use php connection method
+      -a, --async-connect   Asynchronous CONNECT (e.g., in PHP, Node.js)
+      --php-skip-cookie     Skip cookie availability check in php
+      --go                  Use go connection method
       --php-connect-timeout S
                             PHP connect timeout (default: 0.5)
       --local-dns           Use local resolution DNS
@@ -188,13 +197,14 @@ $ python neoreg.py generate -h
       --read-interval MS    Read data interval in milliseconds (default: 300)
       --write-interval MS   Write data interval in milliseconds (default: 200)
       --max-threads N       Proxy max threads (default: 400)
-      --max-retry N         Proxy max threads (default: 10)
+      --max-retry N         Max retry requests (default: 10)
       --cut-left N          Truncate the left side of the response body
       --cut-right N         Truncate the right side of the response body
       --extract EXPR        Manually extract BODY content (eg:
                             <html><p>NEOREGBODY</p></html> )
-      --ntlm-auth USER:PASS Enable NTLM authentication for web requests
-                            (format: DOMAIN\USER:PASSWORD or USER:PASSWORD)
+      --ntlm-auth USER:PASS
+                            Enable NTLM authentication for web requests (format:
+                            DOMAIN\USER:PASSWORD or USER:PASSWORD)
       -v                    Increase verbosity level (use -vv or more for greater
                             effect)
 ```

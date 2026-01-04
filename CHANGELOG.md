@@ -1,5 +1,9 @@
 # Change Log
 
+### v5.3.0:
+    1. 新增对 Node.js 的隧道支持
+    2. 修改 `--php` 参数为 `-a/--async-connect`
+
 ### v5.2.2:
     1. 兼容 curl-cffi 库，以提高请求性能与 http2 支持
     2. 新增 `--ntlm-auth USER:PASS` 参数，支持 NTLM 认证

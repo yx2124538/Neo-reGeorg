@@ -14,7 +14,7 @@
 
 ## Version
 
-5.2.2 - [版本修改日志](CHANGELOG.md)
+5.3.0 - [版本修改日志](CHANGELOG.md)
 
 
 ## Features
@@ -31,7 +31,7 @@
 * 服务端环境的高兼容性，如服务器不稳定、负载均衡下只在部分机器上部署了服务端等特殊情况
 * (仅 php) 参考 [pivotnacci](https://github.com/blackarrowsec/pivotnacci) 实现单 Session 创建多 TCP 连接，应对部分负载均衡场景
 * aspx/ashx/jsp/jspx 已不再依赖 Session，可在无 Cookie 等恶劣环境正常运行
-* (非 php) 支持内网转发，应对负载均衡环境
+* (非 php nodejs) 支持内网转发，应对负载均衡环境
 * 支持进程形式启动服务端，应对更多场景
 
 
@@ -122,6 +122,11 @@ $ go run neoreg_servers/tunnel.go 8000
 $ python3 neoreg.py -k password -u http://127.0.0.1:8000/anysting
 ```
 
+9. 支持 Node.js 的内存马形式，路径修改 js 文件中 `const path = '/proxy_path';`, 连接则需要带上 `--async-connect` 参数
+```ruby
+$ python3 neoreg.py -k password --async-connect -u http://127.0.0.1:8000/proxy_path
+```
+
 * 更多关于性能和稳定性的参数设置参考 -h 帮助信息
 ```ruby
 # 生成服务端脚本
@@ -148,11 +153,12 @@ $ python neoreg.py generate -h
 # 连接服务端
 $ python neoreg.py -h
     usage: neoreg.py [-h] -u URI [-r URL] [-R] [-t IP:PORT] -k KEY [-l IP]
-                     [-p PORT] [-s] [-H LINE] [-c LINE] [-x LINE]
-                     [--php] [--php-connect-timeout S] [--local-dns] [--read-buff KB]
-                     [--read-interval MS] [--write-interval MS] [--max-threads N]
-                     [--max-retry N] [--cut-left N] [--cut-right N]
-                     [--extract EXPR] [-v]
+                     [-p PORT] [-s] [-H LINE] [-c LINE] [-x LINE] [-T STR/FILE]
+                     [-a] [--php-skip-cookie] [--go] [--php-connect-timeout S]
+                     [--local-dns] [--read-buff KB] [--read-interval MS]
+                     [--write-interval MS] [--max-threads N] [--max-retry N]
+                     [--cut-left N] [--cut-right N] [--extract EXPR]
+                     [--ntlm-auth USER:PASS] [-v]
 
     Socks server for Neoreg HTTP(s) tunneller (DEBUG MODE: -k debug)
 
@@ -162,7 +168,7 @@ $ python neoreg.py -h
       -r URL, --redirect-url URL
                             Intranet forwarding the designated server (only
                             java/.net)
-      -R, --force-redirect  Forced forwarding (only -r)
+      -R, --force-redirect  Forced forwarding (only jsp -r)
       -t IP:PORT, --target IP:PORT
                             Network forwarding Target, After setting this
                             parameter, port forwarding will be enabled
@@ -181,7 +187,9 @@ $ python neoreg.py -h
       -T STR/FILE, --request-template STR/FILE
                             HTTP request template (eg:
                             'img=data:image/png;base64,NEOREGBODY&save=ok')
-      --php                 Use php connection method
+      -a, --async-connect   Asynchronous CONNECT (e.g., in PHP, Node.js)
+      --php-skip-cookie     Skip cookie availability check in php
+      --go                  Use go connection method
       --php-connect-timeout S
                             PHP connect timeout (default: 0.5)
       --local-dns           Use local resolution DNS
@@ -190,13 +198,14 @@ $ python neoreg.py -h
       --read-interval MS    Read data interval in milliseconds (default: 300)
       --write-interval MS   Write data interval in milliseconds (default: 200)
       --max-threads N       Proxy max threads (default: 400)
-      --max-retry N         Proxy max threads (default: 10)
+      --max-retry N         Max retry requests (default: 10)
       --cut-left N          Truncate the left side of the response body
       --cut-right N         Truncate the right side of the response body
       --extract EXPR        Manually extract BODY content (eg:
                             <html><p>NEOREGBODY</p></html> )
-      --ntlm-auth USER:PASS Enable NTLM authentication for web requests
-                            (format: DOMAIN\USER:PASSWORD or USER:PASSWORD)
+      --ntlm-auth USER:PASS
+                            Enable NTLM authentication for web requests (format:
+                            DOMAIN\USER:PASSWORD or USER:PASSWORD)
       -v                    Increase verbosity level (use -vv or more for greater
                             effect)
 ```

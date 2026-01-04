@@ -1,5 +1,13 @@
 # Change Log
 
+### v5.3.0:
+    1. Added tunneling support for Node.js
+    2. Modified the `--php` parameter to `-a/--async-connect`
+
+### v5.2.2:
+    1. Add curl-cffi compatability
+    2. Add `--ntlm-auth USER:PASS` parameter to support NTLM authentication
+
 ### v5.2.2:
     1. Add curl-cffi compatability
     2. Add `--ntlm-auth USER:PASS` parameter to support NTLM authentication

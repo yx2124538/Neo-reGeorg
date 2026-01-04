@@ -948,11 +948,11 @@ if __name__ == '__main__':
                 # If DOMAIN\USER, split domain
                 if '\\' in ntlm_user:
                     domain, user = ntlm_user.split('\\', 1)
-                    ntlm_user_full = f"{domain}\\{user}"
+                    ntlm_user_full = "{}\\{}".format(domain, user)
                 else:
                     ntlm_user_full = ntlm_user
                 conn.auth = HttpNtlmAuth(ntlm_user_full, ntlm_pass)
-                log.info(f"[NTLM] Using NTLM authentication for user: {ntlm_user_full}")
+                log.info("[NTLM] Using NTLM authentication for user: {}".format(ntlm_user_full))
 
             # Ensure HTTPS proxy is set if proxying HTTPS
             if PROXY and 'https' not in PROXY:

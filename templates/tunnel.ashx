@@ -9,15 +9,19 @@ using System.Net.Sockets;
 
 public class GenericHandler1 : IHttpHandler, System.Web.SessionState.IRequiresSessionState {
     public String StrTr(string input, string frm, string to) {
-        String r = "";
+        char[] map = new char[128];
+        for(int i=0; i < 128; i++)
+            map[i] = (char) i;
+        int n = frm.Length < to.Length ? frm.Length : to.Length;
+        for(int i=0; i < n; i++)
+            if (frm[i] < 128)
+                map[frm[i]] = to[i];
+        char[] r = new char[input.Length];
         for(int i=0; i < input.Length; i++) {
-            int index = frm.IndexOf(input[i]);
-            if(index != -1)
-                r += to[index];
-            else
-                r += input[i];
+            char c = input[i];
+            r[i] = c < 128 ? map[c] : c;
         }
-        return r;
+        return new String(r);
     }
 
     public static Object[] blv_decode(byte[] data) {
